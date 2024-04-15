@@ -1,11 +1,28 @@
 // isAdminMiddleware.js
+const Admin = require("../models/adminSche"); // Import the Admin model
 
-const isAdminMiddleware = (req, res, next) => {
-  // Check if user is authenticated and has an admin role
-  if (req.user && req.user.role === "admin") {
+const isAdminMiddleware = async (req, res, next) => {
+  try {
+    // Check if user is authenticated
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" }); // Return 401 Unauthorized if user is not authenticated
+    }
+
+    // Find the admin based on the user's email
+    const admin = await Admin.findOne({ email: req.user.email });
+    if (!admin) {
+      return res.status(403).json({ message: "Unauthorized" }); // Return 403 Forbidden if user is not an admin
+    }
+
+    // Check if the admin has the admin role
+    if (admin.role !== "admin") {
+      return res.status(403).json({ message: "Unauthorized" }); // Return 403 Forbidden if user is not an admin
+    }
+
     next(); // Allow the request to proceed
-  } else {
-    res.status(403).json({ message: "Unauthorized" }); // Return 403 Forbidden if user is not an admin
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
   }
 };
 

@@ -16,15 +16,11 @@ const MenuItemSchema = new mongoose.Schema({
     ref: "Category",
     required: true,
   },
+  image: String,
   // Add other menu item fields here
 });
 
 const RestaurantSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   email: {
     type: String,
     required: true,
@@ -38,9 +34,19 @@ const RestaurantSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  locations: {
+  location: {
     type: String,
     required: true,
+  },
+  status: {
+    type: String,
+    enum: ["active", "inactive"],
+    default: "inactive", // Set the default status to "active"
+  },
+  username: {
+    type: String,
+    unique: true,
+    required: true, // Ensure username is required
   },
   menu: [MenuItemSchema],
   // Each restaurant has a menu containing multiple items

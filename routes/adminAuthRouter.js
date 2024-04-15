@@ -73,7 +73,7 @@ const Admin = require("../models/adminSche");
 
 // Admin login route
 router.post(
-  "/login",
+  "/adminlogin",
   [
     check("email", "Please include a valid email").isEmail(),
     check("password", "Password is required").exists(),
@@ -110,7 +110,7 @@ router.post(
       jwt.sign(
         payload,
         process.env.JWT_SECRET,
-        { expiresIn: "1h" },
+        { expiresIn: "1d" },
         (err, token) => {
           if (err) throw err;
           res.json({ token });
