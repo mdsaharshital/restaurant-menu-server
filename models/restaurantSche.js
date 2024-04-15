@@ -7,10 +7,18 @@ const MenuItemSchema = new mongoose.Schema({
     required: true,
   },
   description: String,
-  price: {
-    type: Number,
-    required: true,
-  },
+  sizes: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
