@@ -12,10 +12,10 @@ const authMiddleware = (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.admin) {
-      req.user = decoded.admin;
+      req.user = { ...decoded.admin, role: "admin" };
     }
     if (decoded.restaurant) {
-      req.user = decoded.restaurant;
+      req.user = { ...decoded.restaurant, role: "restaurant" };
     }
     next();
   } catch (err) {

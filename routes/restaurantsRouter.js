@@ -6,6 +6,7 @@ const Category = require("../models/categorySche");
 const { check, validationResult } = require("express-validator");
 const slugify = require("slugify"); // Import slugify library
 const isAdminMiddleware = require("../middleware/isAdminMiddleware");
+const uploadImage = require("../middleware/uploadImage");
 
 // Get all restaurants
 router.get("/", async (req, res) => {
@@ -60,7 +61,6 @@ router.get("/:username/categories", async (req, res) => {
   }
 });
 
-// Add a new menu item to a restaurant's menu
 router.post("/:username/menu", authMiddleware, async (req, res) => {
   try {
     const { name, description, sizes, image, category } = req.body;
@@ -98,13 +98,16 @@ router.post("/:username/menu", authMiddleware, async (req, res) => {
       await existingCategory.save();
     }
 
-    // Create new menu item
+    // Upload image to Cloudinary and get the URL
+    const imageUrl = await uploadImage(image);
+
+    // Create new menu item with image URL
     const newMenuItem = {
       name,
       description,
       sizes,
       category: existingCategory.slug, // Save the category ID
-      image,
+      image: imageUrl, // Save the image URL
     };
 
     restaurant.menu.push(newMenuItem);
@@ -115,7 +118,6 @@ router.post("/:username/menu", authMiddleware, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-
 // Update an existing menu item in a restaurant's menu
 router.put(
   "/:restaurantId/menu/:menuItemId",

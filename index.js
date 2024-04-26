@@ -7,6 +7,7 @@ const adminAuthRoutes = require("./routes/adminAuthRouter");
 const restaurantLoginRoutes = require("./routes/restaurantLoginRouter");
 const restaurantRoutes = require("./routes/restaurantsRouter");
 const categoryRoutes = require("./routes/categoriesRouter");
+const authMiddleware = require("./middleware/authMiddleware");
 const app = express();
 
 // Connect to MongoDB
@@ -21,6 +22,10 @@ app.use("/api/auth/admin", adminAuthRoutes);
 app.use("/api/auth/restaurants", restaurantLoginRoutes);
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/check-session", authMiddleware, (req, res) => {
+  // If the middleware execution reaches here, it means the session is valid
+  res.status(200).json({ message: "Session is valid", user: req.user });
+});
 
 // Handle requests to undefined routes
 app.use("*", function (req, res) {
